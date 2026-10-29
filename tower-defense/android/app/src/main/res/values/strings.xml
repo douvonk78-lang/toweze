@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bastion Route</string>
+    <string name="title_activity_main">Bastion Route</string>
+    <string name="package_name">com.bastionroute.game</string>
+    <string name="custom_url_scheme">com.bastionroute.game</string>
+</resources>

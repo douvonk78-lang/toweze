@@ -1,0 +1,7 @@
+import { LEVELS } from './config';
+export interface Progress { unlocked: number; bestScores: Record<number, number>; sound: boolean }
+const KEY = 'bastion-route-progress-v1';
+export function defaultProgress(): Progress { return { unlocked: 1, bestScores: {}, sound: true }; }
+export function loadProgress(storage: Pick<Storage, 'getItem'> = localStorage): Progress { try { const raw = storage.getItem(KEY); if (!raw) return defaultProgress(); const saved: unknown = JSON.parse(raw); if (!saved || typeof saved !== 'object') return defaultProgress(); const data = saved as Partial<Progress>; return { unlocked: Number.isInteger(data.unlocked) ? Math.max(1, Math.min(LEVELS.length, data.unlocked!)) : 1, bestScores: data.bestScores && typeof data.bestScores === 'object' ? data.bestScores : {}, sound: typeof data.sound === 'boolean' ? data.sound : true }; } catch { return defaultProgress(); } }
+export function saveProgress(progress: Progress, storage: Pick<Storage, 'setItem'> = localStorage): void { try { storage.setItem(KEY, JSON.stringify(progress)); } catch { /* Private mode / quota: gameplay continues. */ } }
+export function recordVictory(progress: Progress, levelId: number, score: number): Progress { return { ...progress, unlocked: Math.min(LEVELS.length, Math.max(progress.unlocked, levelId + 1)), bestScores: { ...progress.bestScores, [levelId]: Math.max(score, progress.bestScores[levelId] ?? 0) } }; }
